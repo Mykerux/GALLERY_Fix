@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('username');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->enum('status', ['1', '0'])->default('0');
+            $table->enum('level', ['admin', 'user'])->default('user');
             $table->softDeletes();
+            $table->timestamps();
         });
     }
 

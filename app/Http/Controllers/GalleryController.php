@@ -16,9 +16,12 @@ class GalleryController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $gallery = Gallery::where('user_id', $user->id)->latest()->get();
+        // $user = Auth::user();
+        // $gallery = Gallery::where('user_id', $user->id)->latest()->get();
 
+        // return view('index', compact('gallery'));
+
+        $gallery = Gallery::where('user_id', Auth::user()->id)->where('status', 'accept')->orderBy('created_at', 'desc')->get();
         return view('index', compact('gallery'));
     }
 
@@ -40,29 +43,44 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        $val = $request->validate([
-            'judul'=>'required',
-            'deskripsi'=>'required',
-            'photo'=>'required|mimes:png,jpg,svg,gif',
+        // $val = $request->validate([
+        //     'judul'=>'required',
+        //     'deskripsi'=>'required',
+        //     'photo'=>'required|mimes:png,jpg,svg,gif',
+        // ]);
+
+        // if ($request->hasFile('photo')) {
+        //     $filePath = Storage::disk('public')->put('images/posts/', request()->file('photo'));
+        //     $val['photo'] = $filePath;
+        // }
+
+        // $create = Gallery::create([
+        //     'judul'=>$val['judul'],
+        //     'deskripsi'=>$val['deskripsi'],
+        //     'photo'=>$val['photo'],
+        //     'user_id'=>Auth::user()->id,
+        // ]);
+
+        // if ($create) {
+        //     return redirect('/gallery')->with('alert.berhasil', 'Photo berhasil diunggah!!');
+        // }
+
+        // return abort(500);
+
+        $request->validate([
+            'photo' => 'required|image|mimes:png,jpg,jpeg',
         ]);
+        
+        $namafoto = Auth::user()->id . date('YmdHis') . $request->photo->getClientOriginalName();
+        $request->photo->move(public_path('photo'), $namafoto);
 
-        if ($request->hasFile('photo')) {
-            $filePath = Storage::disk('public')->put('images/posts/', request()->file('photo'));
-            $val['photo'] = $filePath;
-        }
-
-        $create = Gallery::create([
-            'judul'=>$val['judul'],
-            'deskripsi'=>$val['deskripsi'],
-            'photo'=>$val['photo'],
-            'user_id'=>Auth::user()->id,
+        Gallery::create([
+            'user_id' => Auth::user()->id,
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'photo' => $namafoto,
         ]);
-
-        if ($create) {
-            return redirect('/gallery')->with('alert.berhasil', 'Photo berhasil diunggah!!');
-        }
-
-        return abort(500);
+        return back()->with('alert.tambah', 'Tunggu Photo Disetujui oleh Admin!! / Jika Photo yang anda unggah tidak muncul dalam waktu 2 hari maka Photo tidak disetujui!!');
     }
 
     /**
@@ -105,15 +123,19 @@ class GalleryController extends Controller
             $gallery->photo = $filePath;
             
             $gallery->save();
+            
+            return redirect('/gallery')->with('alert.ubah', 'Gambar Berhasil Diubah!!');
+
         } else {
             $gallery->judul = $request->judul;
             $gallery->deskripsi = $request->deskripsi;
             $gallery->photo = $gallery->photo;
             
             $gallery->save();
+            
+            return redirect('/gallery')->with('alert.ubah', 'Judul / Deskripsi Berhasil Diubah!!');
         }
         
-        return redirect('/gallery')->with('alert.ubah', 'Data Berhasil Diubah!!');
         
     }
 

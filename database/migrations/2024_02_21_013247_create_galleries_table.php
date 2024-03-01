@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
             $table->string('judul');
-            $table->string('deskripsi');
+            $table->text('deskripsi');
             $table->string('photo');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->timestamps();
+            $table->integer('user_id');
+            $table->enum('status', ['accept', 'pending', 'declined'])->default('pending');
             $table->softDeletes();
+            $table->timestamps();
         });
     }
 

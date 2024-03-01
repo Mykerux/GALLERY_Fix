@@ -24,8 +24,12 @@
       {{-- <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li> --}}
+      
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="#" class="nav-link">Home | {{ Auth::user()->email }}</b></a>
+        <a href="/profile"><img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2 mt-1 ml-3" style="height: 30px; width: 30px" alt=""></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="/profile" class="nav-link"> | {{ Auth::user()->email }}</a>
       </li>
       
     </ul>
@@ -88,12 +92,12 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" data-toggle="modal" data-target="#baru" role="button">
-          <i class="fas fa-upload"></i> Tambah Photo
+          <i class="fas fa-upload mr-1"></i> Tambah Photo
         </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/logout" role="button">
-          <i class="fas fa-th-large"></i> Logout
+          <i class="fas fa-th-large mr-1"></i> Logout
         </a>
       </li>
     </ul>
@@ -123,7 +127,6 @@
     <section class="content " style="background-color: #ececec">
       <div class="container-fluid py-5 ">
         
-        {{-- alert --}}
         <div class="alert ml-4 mr-4 mt-2 mb-0">
             @if (session('alert.tambah'))
             <div class="alert alert-success">
@@ -142,11 +145,17 @@
                     {{ session('alert.hapus') }}
                 </div>
             @endif
+
+            @if (session('alert.gagal'))
+                <div class="alert alert-danger">
+                    {{ session('alert.gagal') }}
+                </div>
+            @endif
         </div>
 
         <!-- Timelime example  -->
         <div class="background ml-5 mr-5 shadow" style="background-color: #fff; padding: 5px 5px 15px 5px; border-radius: 10px">
-            <h1 class="title" style="padding: 10px">Selamat Datang <b>{{ Auth::user()->name }}</b></h1>
+            <h1 class="title" style="padding: 20px 10px 0 15px">Selamat Datang <b>{{ Auth::user()->name }}</b></h1>
             <hr>
           <div class="container col-12" >
             <div class="row">
@@ -156,42 +165,36 @@
             {{-- <div class="time-label">
               <span class="bg-green">3 Jan. 2014</span>
             </div> --}}
-
-            {{-- Foto --}}
             @foreach ($gallery as $item)
             
             <div class="col-2" >
                 
-              {{-- <i class="fa fa-camera bg-purple"></i> --}}
-              <div class="timeline-item mt-3" style="background-color: #a5a3a1; border-radius: 10px">
+                {{-- <i class="fa fa-camera bg-purple"></i> --}}
+                <div class="timeline-item mt-3" style="background-color: #a5a3a1; border-radius: 10px">
                 {{-- <span class="time"><i class="fas fa-clock"></i> 2 days ago</span> --}}
 
                 <div class="timeline-header">
 
                     <i class="fas fa-bars" data-toggle="dropdown" style="padding: 15px 0 10px 15px"></i>
-                    <span class="badge badge-danger navbar-badge"></i>{{ date('d - M - Y', strtotime($item->created_at)) }}</span>
+                    <span class="badge bg-gradient-danger navbar-badge"></i>{{ date('d - M - Y', strtotime($item->created_at)) }}</span>
                         
                     <div class="dropdown-menu dropdown-menu-s ">
 
-                        <a href="#" class="btn btn-warning fa fa-edit ml-2" data-toggle="modal" data-target="#edit{{ $item->id }}" style="color: #fff"></a>
-                        <a href="{{ route('gallery.show', $item->id) }}" class="btn btn-danger ml-1"><i class="fa fa-trash" onclick="return confirm('Photo yang akan dihapus tidak akan bisa dilihat kembali, Apkah anda yakin menghapus Photo ini?')"></i></a>
-                        <a href="{{ Storage::url($item->photo) }}" download="{{ basename(Storage::url($item->photo)) }}" class="btn btn-primary ml-1" style="color: #fff;"><i class="fa fa-download"></i></a>
+                        <a href="#" class="btn bg-gradient-warning fa fa-edit ml-2" data-toggle="modal" data-target="#edit{{ $item->id }}" style="color: #fff"></a>
+                        <a href="{{ route('gallery.show', $item->id) }}" class="btn bg-gradient-danger ml-1" onclick="return confirm('Photo yang akan dihapus tidak akan bisa dilihat kembali, Apkah anda yakin menghapus Photo ini?')"><i class="fa fa-trash" ></i></a>
+                        <a href="{{ Storage::url($item->photo) }}" download="{{ basename(Storage::url($item->photo)) }}" class="btn bg-gradient-primary ml-1" style="color: #fff;"><i class="fa fa-download"></i></a>
 
                     </div>
                     
                 </div>
                 <div class="timeline-body">
-                  <a href="{{ Storage::url($item->photo) }}" 
-                    data-toggle="lightbox" 
-                    data-title="<b>{{ $item->judul }}</b> | {{ $item->deskripsi }}" 
-                    data-gallery="gallery" 
-                    data-footer="<i>( {{ date('d - M - Y', strtotime($item->created_at)) }} )</i> <a href='{{ Storage::url($item->photo) }}' download='{{ basename(Storage::url($item->photo)) }}' class='btn btn-primary' style='color: #fff'><i class='fa fa-download'></i></a>">
-                  
-                    <img src="{{ Storage::url($item->photo) }}" class="img-fluid card-outline card-dark" alt="" style="object-fit: cover ;width: 280px; height: 280px; position: relative; padding: 10px 10px 10px 11px; border-radius: 10px"/>
-                  </a>
+                <a href="{{ asset('photo/' . $item->photo) }}" data-toggle="lightbox" data-title="<b>{{ $item->judul }}</b> | {{ $item->deskripsi }}" data-gallery="gallery" data-footer="<i>( {{ date('d - M - Y', strtotime($item->created_at)) }} )</i> <a href='{{ asset('photo/' . $item->photo) }}' download='{{ basename(Storage::url($item->photo)) }}' class='btn btn-primary' style='color: #fff'><i class='fa fa-download'></i></a>">
+                
+                <img src="{{ asset('photo/' . $item->photo) }}" class="img-fluid card-outline card-dark" alt="" style="object-fit: cover;width: 280px; height: 280px; position: relative; padding: 10px 10px 10px 11px; border-radius: 10px"/>
+                </a>
                 </div>
                 
-              </div>
+                </div>
 
             </div>
 
@@ -221,14 +224,17 @@
                                         <label for="photo">Photo</label>
                                         <br>
                                         <input type="file" name="photo" id="photo">
+                                        <br>
+
+                                        <span class="text-danger">* Jika Photo tidak ingin Diubah,tidak perlu diisi</span>
+
                                         <hr>
                                     </div>
-
-                                    <img src="{{ Storage::url($item->photo) }}" class="d_block mb-2" alt="" style="object-fit: cover; width: 175px; height: 175px;"/>
-
+                                    
+                                    <img src="{{ asset('photo/' . $item->photo) }}" class="d_block mb-2" alt="" style="object-fit: cover; width: 175px; height: 175px;"/>
                                     <hr>
 
-                                    <button type="submit" class="btn btn-warning" style="color: #fff">Simpan Perubahan</button>
+                                    <button type="submit" class="btn bg-gradient-warning" style="color: #fff">Simpan Perubahan</button>
                                 </div>
                             </form>
                     </div>
@@ -277,7 +283,7 @@
                                 <hr>
                             </div>
         
-                            <button type="submit" class="btn btn-success">Simpan</button>
+                            <button type="submit" class="btn bg-gradient-success">Simpan</button>
                         </div>
                     </form>
             </div>

@@ -35,7 +35,7 @@
           <input type="text" class="form-control" placeholder="Nama" name="name" required>
           <div class="input-group-append">
             <div class="input-group-text">
-              <span class="fas fa-user"></span>
+              <span class="fas fa-file"></span>
             </div>
           </div>
         </div>
@@ -64,10 +64,10 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Retype password" name="repassword" minlength="3" required>
+          <input type="password" class="form-control" placeholder="Tulis Ulang password" name="repassword" minlength="3" required>
           <div class="input-group-append">
             <div class="input-group-text">
-              <span class="fas fa-lock"></span>
+              <span class="fas fa-unlock"></span>
             </div>
           </div>
         </div>
